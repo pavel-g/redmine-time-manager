@@ -1,26 +1,148 @@
-oclif-hello-world
-=================
+Redmine Time Manager
+====================
 
-oclif example Hello World CLI
+Cli tool for redmine time managment
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
-[![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
-[![Downloads/week](https://img.shields.io/npm/dw/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
-[![License](https://img.shields.io/npm/l/oclif-hello-world.svg)](https://github.com/oclif/hello-world/blob/main/package.json)
+Main idea:
+
+* You prepare configuration for transformation your csv for redmine time entries api format only once
+* Regularly call this script for transfering your time entries and saving it in redmine
+
+Examples
+========
+
+Transformation from Microsoft Excel or LibreOffice Calc or GoogleDocs Spreadsheets:
+
+Your configuration (`config.json`) may be as:
+
+```json
+{
+  "csv": {
+    "delimiter": "\t",
+    "columns": true,
+    "encoding": "utf8",
+    "quote": false
+  },
+  "rules": {
+    "columns": {
+      "issue": "Issue",
+      "activity": "Action",
+      "comment": "Description",
+      "time": "Time"
+    }
+  },
+  "time_type": "time",
+  "date_source": "argument",
+  "date_format": "yyyy-MM-dd",
+  "issue_regexp": "\\d+",
+  "redmine": {
+    "url": "http://token@redmine.example.org",
+    "user_id": 123,
+    "default_issue": 456,
+    "activities": {
+      "Code": 1,
+      "Code Review": 2,
+      "Test": 3
+    },
+    "default_activity_code": 1
+  }
+}
+```
+
+Next for GNU/Linux with Xorg, you can select table, tap CTRL+C for coping in system clipboard, and call command:
+
+```bash
+xsel -o | redmine-time-manager save --config=config.json --date=2022-02-01 --rewrite
+```
+
+Or for other system you can save into csv file (for example `my-daily-time.csv`), and call command:
+
+```bash
+redmine-time-manager save --config=config.json --from-file=my-daily-time.csv --date=2022-02-01
+```
+
+Transformation from [Hamster Time Tracker](https://github.com/projecthamster/hamster):
+
+Your configuration (`config.json`) may be as:
+
+```json
+{
+  "csv": {
+    "delimiter": "\t",
+    "columns": true,
+    "encoding": "utf8",
+    "quote": false
+  },
+  "rules": {
+    "columns": {
+      "issue": "занятие",
+      "activity": "метки",
+      "comment": "описание",
+      "time": "длительность в минутах",
+      "date": "время начала",
+      "category": "категория"
+    }
+  },
+  "time_type": "minutes",
+  "date_source": "column",
+  "date_format": "yyyy-MM-dd HH:mm",
+  "issue_regexp": "\\d+",
+  "query": "select * from ? where category = 'Work'",
+  "redmine": {
+    "url": "http://token@redmine.example.org",
+    "user_id": 123,
+    "default_issue": 456,
+    "activities": {
+      "Code": 1,
+      "Code Review": 2,
+      "Test": 3
+    },
+    "default_activity_code": 1
+  }
+}
+```
+
+Hamster Time Tracker supported export reports to tsv format (csv by tab delimiters), and you can call command:
+
+```bash
+redmine-time-manager save --config=config.json --from-file=my-daily-time.tsv
+```
+
+Description of config params
+============================
+
+* `csv` - for this section see https://csv.js.org/parse/options/
+* `rules.columns` - mapping rules for column names, must defined aliases for time, issue, activity, date, comment
+* `time_type` - time format, may be "hours"/"minutes"/"time"
+* `date_source` - source of date, may be "column"/"argument"
+* `issue_regexp` - regexp of issue number, mostly - `"\\d+"`
+* `date_format` - format of date, for example `yyyy-MM-dd`
+* `redmine` - params for redmine
+  * `url`
+  * `user_id` - your user id
+  * `default_issue` - default issue number
+  * `activities` - mapping rules of activity_id aliases in your Redmine instance
+
+Additional:
+
+* `query` - filter of date like sql syntax \
+  for example: `select * from ? where category = 'Work'`
+
+# TOC
 
 <!-- toc -->
+* [TOC](#toc)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g redmine-time-manager-2
+$ npm install -g redmine-time-manager
 $ redmine-time-manager COMMAND
 running command...
 $ redmine-time-manager (--version)
-redmine-time-manager-2/0.0.0 linux-x64 node-v16.13.1
+redmine-time-manager/0.1.0 linux-x64 node-v16.13.1
 $ redmine-time-manager --help [COMMAND]
 USAGE
   $ redmine-time-manager COMMAND
@@ -29,56 +151,8 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`redmine-time-manager hello PERSON`](#redmine-time-manager-hello-person)
-* [`redmine-time-manager hello world`](#redmine-time-manager-hello-world)
 * [`redmine-time-manager help [COMMAND]`](#redmine-time-manager-help-command)
-* [`redmine-time-manager plugins`](#redmine-time-manager-plugins)
-* [`redmine-time-manager plugins:inspect PLUGIN...`](#redmine-time-manager-pluginsinspect-plugin)
-* [`redmine-time-manager plugins:install PLUGIN...`](#redmine-time-manager-pluginsinstall-plugin)
-* [`redmine-time-manager plugins:link PLUGIN`](#redmine-time-manager-pluginslink-plugin)
-* [`redmine-time-manager plugins:uninstall PLUGIN...`](#redmine-time-manager-pluginsuninstall-plugin)
-* [`redmine-time-manager plugins update`](#redmine-time-manager-plugins-update)
-* [`redmine-time-manager save [FILE]`](#redmine-time-manager-save-file)
-
-## `redmine-time-manager hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ redmine-time-manager hello [PERSON] -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Whom is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [dist/commands/hello/index.ts](https://github.com/pavel-g/redmine-time-manager-cli/blob/v0.0.0/dist/commands/hello/index.ts)_
-
-## `redmine-time-manager hello world`
-
-Say hello world
-
-```
-USAGE
-  $ redmine-time-manager hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ oex hello world
-  hello world! (./src/commands/hello/world.ts)
-```
+* [`redmine-time-manager save`](#redmine-time-manager-save)
 
 ## `redmine-time-manager help [COMMAND]`
 
@@ -100,170 +174,29 @@ DESCRIPTION
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.10/src/commands/help.ts)_
 
-## `redmine-time-manager plugins`
+## `redmine-time-manager save`
 
-List installed plugins.
+Save time entries to redmine. Full documentation in README.
 
 ```
 USAGE
-  $ redmine-time-manager plugins [--core]
+  $ redmine-time-manager save -c <value> [--from-file <value>] [--date <value>] [--dry] [--rewrite]
 
 FLAGS
-  --core  Show core plugins.
+  -c, --config=<value>  (required) [default: redmine-time-manager-config.json] Json config
+  --date=<value>        Date. Must defined when config.date_source = "argument"
+  --dry                 For testing calls. Delete and write operations will be disabled.
+  --from-file=<value>   Csv file. If undefined, will use stdin
+  --rewrite             Redmine data at choosed date will be rewrited.
 
 DESCRIPTION
-  List installed plugins.
+  Save time entries to redmine. Full documentation in README.
 
 EXAMPLES
-  $ redmine-time-manager plugins
+  $ redmine-time-manager save --config=config.json --date=2000-01-01 --rewrite --from-file=my-work-time.csv    # reading from csv file
+
+  $ xsel -o | redmine-time-manager save --config=config.json --date=2000-01-01 --rewrite    # reading csv from stdin from Xorg clipboard
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.0.11/src/commands/plugins/index.ts)_
-
-## `redmine-time-manager plugins:inspect PLUGIN...`
-
-Displays installation properties of a plugin.
-
-```
-USAGE
-  $ redmine-time-manager plugins:inspect PLUGIN...
-
-ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Displays installation properties of a plugin.
-
-EXAMPLES
-  $ redmine-time-manager plugins:inspect myplugin
-```
-
-## `redmine-time-manager plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
-```
-USAGE
-  $ redmine-time-manager plugins:install PLUGIN...
-
-ARGUMENTS
-  PLUGIN  Plugin to install.
-
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Installs a plugin into the CLI.
-
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-ALIASES
-  $ redmine-time-manager plugins add
-
-EXAMPLES
-  $ redmine-time-manager plugins:install myplugin 
-
-  $ redmine-time-manager plugins:install https://github.com/someuser/someplugin
-
-  $ redmine-time-manager plugins:install someuser/someplugin
-```
-
-## `redmine-time-manager plugins:link PLUGIN`
-
-Links a plugin into the CLI for development.
-
-```
-USAGE
-  $ redmine-time-manager plugins:link PLUGIN
-
-ARGUMENTS
-  PATH  [default: .] path to plugin
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Links a plugin into the CLI for development.
-
-  Installation of a linked plugin will override a user-installed or core plugin.
-
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
-  command will override the user-installed or core plugin implementation. This is useful for development work.
-
-EXAMPLES
-  $ redmine-time-manager plugins:link myplugin
-```
-
-## `redmine-time-manager plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ redmine-time-manager plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ redmine-time-manager plugins unlink
-  $ redmine-time-manager plugins remove
-```
-
-## `redmine-time-manager plugins update`
-
-Update installed plugins.
-
-```
-USAGE
-  $ redmine-time-manager plugins update [-h] [-v]
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Update installed plugins.
-```
-
-## `redmine-time-manager save [FILE]`
-
-Save time entries to redmine
-
-```
-USAGE
-  $ redmine-time-manager save [FILE] [-n <value>] [-f]
-
-FLAGS
-  -f, --force
-  -n, --name=<value>  name to print
-
-DESCRIPTION
-  Save time entries to redmine
-
-EXAMPLES
-  $ redmine-time-manager save
-```
-
-_See code: [dist/commands/save.ts](https://github.com/pavel-g/redmine-time-manager-cli/blob/v0.0.0/dist/commands/save.ts)_
+_See code: [dist/commands/save.ts](https://github.com/pavel-g/redmine-time-manager-cli/blob/v0.1.0/dist/commands/save.ts)_
 <!-- commandsstop -->
