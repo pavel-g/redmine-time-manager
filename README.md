@@ -38,6 +38,7 @@ USAGE
 * [`redmine-time-manager plugins:link PLUGIN`](#redmine-time-manager-pluginslink-plugin)
 * [`redmine-time-manager plugins:uninstall PLUGIN...`](#redmine-time-manager-pluginsuninstall-plugin)
 * [`redmine-time-manager plugins update`](#redmine-time-manager-plugins-update)
+* [`redmine-time-manager save [FILE]`](#redmine-time-manager-save-file)
 
 ## `redmine-time-manager hello PERSON`
 
@@ -244,4 +245,25 @@ FLAGS
 DESCRIPTION
   Update installed plugins.
 ```
+
+## `redmine-time-manager save [FILE]`
+
+Save time entries to redmine
+
+```
+USAGE
+  $ redmine-time-manager save [FILE] [-n <value>] [-f]
+
+FLAGS
+  -f, --force
+  -n, --name=<value>  name to print
+
+DESCRIPTION
+  Save time entries to redmine
+
+EXAMPLES
+  $ redmine-time-manager save
+```
+
+_See code: [dist/commands/save.ts](https://github.com/pavel-g/redmine-time-manager-cli/blob/v0.0.0/dist/commands/save.ts)_
 <!-- commandsstop -->

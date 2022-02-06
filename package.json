@@ -1,7 +1,7 @@
 {
   "name": "redmine-time-manager-2",
-  "version": "0.0.0",
-  "description": "oclif example Hello World CLI",
+  "version": "0.1.0",
+  "description": "Redmine Time Manager",
   "author": "Pavel Gnedov @pavel-g",
   "bin": {
     "redmine-time-manager": "./bin/run"
@@ -19,11 +19,17 @@
   "dependencies": {
     "@oclif/core": "^1",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.0.1"
+    "@oclif/plugin-plugins": "^2.0.1",
+    "alasql": "^1.7.3",
+    "axios": "^0.25.0",
+    "csv-parse": "^5.0.4",
+    "get-stdin": "^9.0.0",
+    "luxon": "^2.3.0"
   },
   "devDependencies": {
     "@oclif/test": "^2",
     "@types/chai": "^4",
+    "@types/luxon": "^2.0.9",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.9.4",
     "chai": "^4",
@@ -43,15 +49,8 @@
     "dirname": "redmine-time-manager",
     "commands": "./dist/commands",
     "plugins": [
-      "@oclif/plugin-help",
-      "@oclif/plugin-plugins"
-    ],
-    "topicSeparator": " ",
-    "topics": {
-      "hello": {
-        "description": "Say hello to the world and others"
-      }
-    }
+      "@oclif/plugin-help"
+    ]
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
