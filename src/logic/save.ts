@@ -5,7 +5,7 @@ import {config} from "./config";
 import axios from "axios";
 import {loadEntries} from "./open";
 import {ColumnConverter, filterByQuery, getDate, getItemForRedmine, TimeEntryForRedmine} from "./csv";
-import {uniq} from "./utils";
+import {sleep, uniq} from './utils'
 
 function readContentFromFile(fileName: string): string {
     return fs.readFileSync(fileName, {encoding: 'utf8'});
@@ -13,7 +13,7 @@ function readContentFromFile(fileName: string): string {
 
 async function readContentFromStdin(): Promise<string> {
     const GetStdin = await import('get-stdin');
-    return await GetStdin.default();
+    return GetStdin.default();
 }
 
 async function readContent(): Promise<string> {
@@ -26,23 +26,24 @@ async function readContent(): Promise<string> {
     return content;
 }
 
-function backupEntries(entries: Record<string, any>): void {
+function backupEntries(entries: Record<string, any>[]): void {
     const fileName = `entries-${args['date']}.json`;
     const content = JSON.stringify(entries);
     fs.writeFileSync(fileName, content, {encoding: "utf8"});
 }
 
-async function deleteEntries(entries: Record<string, any>): Promise<void> {
-    await Promise.all(
-        entries.map(async (entry: Record<string, any>) => {
-            const url = `${config.redmine.url}/time_entries/${entry.id}.xml`;
-            if (args['dry']) {
-                console.log('Delete time entry:', {url, entry});
-            } else {
-                await axios.delete(url);
-            }
-        })
-    );
+async function deleteEntries(entries: Record<string, any>[]): Promise<void> {
+    let i: number;
+    for (i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const url = `${config.redmine.url}/time_entries/${entry.id}.xml`;
+        if (args['dry']) {
+            console.log('Delete time entry:', {url, entry});
+        } else {
+            await axios.delete(url);
+        }
+        await sleep(100);
+    }
 }
 
 async function cleanTimeEntries(items: TimeEntryForRedmine[]): Promise<void> {
@@ -91,6 +92,7 @@ async function saveCsv(csvData: TimeEntryForRedmine[]): Promise<void> {
         }
         const saveResult = await saveItem(item);
         if (saveResult) successCount++;
+        await sleep(100);
     }
     console.log(`Сохранено записей: ${successCount}`);
 }
@@ -113,8 +115,14 @@ export async function save(): Promise<void> {
       })
       .map(item => item.item) as TimeEntryForRedmine[];
 
-    if (args['rewrite']) await cleanTimeEntries(items);
+    if (args['rewrite']) {
+        console.log('Очистка существующих записей...')
+        await cleanTimeEntries(items);
+        console.log('Очистка существующих записей завершена')
+    }
+    console.log('Сохранение новых записей...');
     await saveCsv(items);
+    console.log('Сохранение новых записей завершено');
 }
 
 export function getUniqDates(items: TimeEntryForRedmine[]): string[] {

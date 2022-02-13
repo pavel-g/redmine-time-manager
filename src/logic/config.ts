@@ -40,7 +40,7 @@ export const defaultConfig: ConfigTypes.Config = {
     }
 };
 
-export function getConfig(force: boolean = false): ConfigTypes.Config {
+export function getConfig(force = false): ConfigTypes.Config {
     if (!force && !Args.args['config']) {
         return defaultConfig;
     }

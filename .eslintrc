@@ -2,5 +2,35 @@
   "extends": [
     "oclif",
     "oclif-typescript"
-  ]
+  ],
+  "rules": {
+    "quotes": "off",
+    "indent": "off",
+    "semi": "off",
+    "unicorn/prefer-node-protocol": "off",
+    "unicorn/prefer-ternary": "off",
+    "dot-notation": "off",
+    "padding-line-between-statements": "off",
+    "camelcase": "off",
+    "unicorn/no-console-spaces": "off",
+    "new-cap": "off",
+    "no-await-in-loop": "off",
+    "unicorn/no-for-loop": "off",
+    "comma-dangle": "off",
+    "node/no-missing-import": "off",
+    "no-else-return": "off",
+    "quote-props": "off",
+    "no-inner-declarations": "off",
+    "no-process-exit": "off",
+    "unicorn/no-process-exit": "off",
+    "eol-last": "off",
+    "no-prototype-builtins": "off",
+    "padded-blocks": "off",
+    "unicorn/prefer-number-properties": "off",
+    "operator-assignment": "off",
+    "no-negated-condition": "off",
+    "unicorn/catch-error-name": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "unicorn/prefer-includes": "off"
+  }
 }
