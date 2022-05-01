@@ -21,7 +21,7 @@
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
     "alasql": "^1.7.3",
-    "axios": "^0.25.0",
+    "axios": "^0.27.2",
     "csv-parse": "^5.0.4",
     "get-stdin": "^9.0.0",
     "luxon": "^2.3.0"
