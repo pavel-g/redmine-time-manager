@@ -24,12 +24,12 @@
     "axios": "^0.25.0",
     "csv-parse": "^5.0.4",
     "get-stdin": "^9.0.0",
-    "luxon": "^2.3.0"
+    "luxon": "^2.4.0"
   },
   "devDependencies": {
     "@oclif/test": "^2",
     "@types/chai": "^4",
-    "@types/luxon": "^2.0.9",
+    "@types/luxon": "^2.3.2",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.9.4",
     "chai": "^4",
