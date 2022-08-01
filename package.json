@@ -24,7 +24,7 @@
     "axios": "^0.25.0",
     "csv-parse": "^5.0.4",
     "get-stdin": "^9.0.0",
-    "luxon": "^2.3.0"
+    "luxon": "^2.5.0"
   },
   "devDependencies": {
     "@oclif/test": "^2",
