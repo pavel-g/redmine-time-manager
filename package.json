@@ -20,7 +20,7 @@
     "@oclif/core": "^1",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
-    "alasql": "^1.7.3",
+    "alasql": "^1.7.4",
     "axios": "^0.25.0",
     "csv-parse": "^5.0.4",
     "get-stdin": "^9.0.0",
