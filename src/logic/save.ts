@@ -5,15 +5,17 @@ import {config} from "./config";
 import axios from "axios";
 import {loadEntries} from "./open";
 import {ColumnConverter, filterByQuery, getDate, getItemForRedmine, TimeEntryForRedmine} from "./csv";
-import {sleep, uniq} from './utils'
+import {sleep, uniq} from './utils';
+import GetStdin from '../utils/get-stdin';
 
 function readContentFromFile(fileName: string): string {
     return fs.readFileSync(fileName, {encoding: 'utf8'});
 }
 
 async function readContentFromStdin(): Promise<string> {
-    const GetStdin = await import('get-stdin');
-    return GetStdin.default();
+    // const GetStdin = await import('get-stdin');
+    // const GetStdin = await import('get-stdin');
+    return await GetStdin();
 }
 
 async function readContent(): Promise<string> {
@@ -50,9 +52,20 @@ async function cleanTimeEntries(items: TimeEntryForRedmine[]): Promise<void> {
     const dates = getUniqDates(items);
     for (let i = 0; i < dates.length; i++) {
         const date = dates[i];
-        const entries = await loadEntries(date);
+        let entries;
+        try {
+            entries = await loadEntries(date);
+        } catch (ex) {
+            console.error(`Ошибка при поиске существующих записей на ${date}`, ex);
+            return;
+        }
         backupEntries(entries);
-        await deleteEntries(entries);
+        try {
+            await deleteEntries(entries);
+        } catch (ex) {
+            console.error(`Ошибка при удалении записей на ${date}`, ex);
+            return;
+        }
     }
 }
 
@@ -73,7 +86,12 @@ async function saveItem(item: TimeEntryForRedmine): Promise<boolean> {
     if (args['dry']) {
         console.log('Save time entry:', {url, data, params: params});
     } else {
-        const resp = await axios.post(url, data, {params: params});
+        let resp;
+        try {
+            resp = await axios.post(url, data, {params: params});
+        } catch (ex) {
+            console.error('Ошибка при сохранении', {url: url, data: data, resp: resp}); // DEBUG
+        }
         if (!resp || !resp.data) {
             console.error(`Не удалось сохранить в redmine запись `, item);
             return false;
