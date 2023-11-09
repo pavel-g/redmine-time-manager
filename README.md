@@ -142,7 +142,7 @@ $ npm install -g redmine-time-manager
 $ redmine-time-manager COMMAND
 running command...
 $ redmine-time-manager (--version)
-redmine-time-manager/0.2.0 linux-x64 node-v16.13.1
+redmine-time-manager/0.2.1 linux-x64 node-v21.0.0
 $ redmine-time-manager --help [COMMAND]
 USAGE
   $ redmine-time-manager COMMAND
@@ -198,5 +198,5 @@ EXAMPLES
   $ xsel -o | redmine-time-manager save --config=config.json --date=2000-01-01 --rewrite    # reading csv from stdin from Xorg clipboard
 ```
 
-_See code: [dist/commands/save.ts](https://github.com/pavel-g/redmine-time-manager-cli/blob/v0.2.0/dist/commands/save.ts)_
+_See code: [dist/commands/save.ts](https://github.com/pavel-g/redmine-time-manager-cli/blob/v0.2.1/dist/commands/save.ts)_
 <!-- commandsstop -->

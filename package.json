@@ -1,6 +1,6 @@
 {
   "name": "redmine-time-manager",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Redmine Time Manager",
   "author": "Pavel Gnedov @pavel-g",
   "bin": {
