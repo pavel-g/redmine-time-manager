@@ -15,5 +15,7 @@ export async function loadEntries(date: string): Promise<TimeEntry[]> {
     if (!resp || resp.status !== 200 || !resp.data || !resp.data.time_entries) {
         throw new Error('Не удалось загрузить записи за дату');
     }
-    return resp.data.time_entries;
+    return resp.data.time_entries.filter((entry) => {
+        return entry.user.id === config.redmine.user_id;
+    });
 }

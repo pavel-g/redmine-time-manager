@@ -34,10 +34,13 @@ function backupEntries(entries: Record<string, any>[]): void {
     fs.writeFileSync(fileName, content, {encoding: "utf8"});
 }
 
-async function deleteEntries(entries: Record<string, any>[]): Promise<void> {
+async function deleteEntries(entries: Record<string, any>[], userId: any): Promise<void> {
     let i: number;
     for (i = 0; i < entries.length; i++) {
         const entry = entries[i];
+        if (entry?.user?.id != userId) {
+            continue;
+        }
         const url = `${config.redmine.url}/time_entries/${entry.id}.xml`;
         if (args['dry']) {
             console.log('Delete time entry:', {url, entry});
@@ -48,7 +51,7 @@ async function deleteEntries(entries: Record<string, any>[]): Promise<void> {
     }
 }
 
-async function cleanTimeEntries(items: TimeEntryForRedmine[]): Promise<void> {
+async function cleanTimeEntries(items: TimeEntryForRedmine[], userId: any): Promise<void> {
     const dates = getUniqDates(items);
     for (let i = 0; i < dates.length; i++) {
         const date = dates[i];
@@ -61,7 +64,7 @@ async function cleanTimeEntries(items: TimeEntryForRedmine[]): Promise<void> {
         }
         backupEntries(entries);
         try {
-            await deleteEntries(entries);
+            await deleteEntries(entries, userId);
         } catch (ex) {
             console.error(`Ошибка при удалении записей на ${date}`, ex);
             return;
@@ -135,7 +138,13 @@ export async function save(): Promise<void> {
 
     if (args['rewrite']) {
         console.log('Очистка существующих записей...')
-        await cleanTimeEntries(items);
+        const userId = config.redmine.user_id;
+        if (!userId) {
+            console.error('В конфигурационном файле не указан user_id');
+            process.exit(1);
+            return;
+        }
+        await cleanTimeEntries(items, userId);
         console.log('Очистка существующих записей завершена')
     }
     console.log('Сохранение новых записей...');
